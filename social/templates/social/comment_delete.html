@@ -1,0 +1,96 @@
+{% extends 'landing/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<main>
+    <div class="container main-container">
+        <div class="main-left">
+			<div class="profile" style="display: flex; align-items: center; justify-content: center;">
+				<a href="{% url 'post-detail' object.post.pk %}" class="btn btn-primary">back</a>
+			</div>
+            <!--.... SIDEBAR .....-->
+            <div class="side-bar">
+                <a href="{% url 'post-list' %}" class="menu-item">
+                    <span><img src="{% static 'images/svg/house-door.svg'%}" class="icon1" alt=""></span><h3>home</h3>
+                </a>
+                <a href="#" id="themeMenu" class="menu-item">
+                    <span><img src="{% static 'images/svg/palette.svg' %}" class="icon1" alt=""></span><h3>theme</h3>
+                </a>
+            </div>
+		</div>
+        <div class="main-mid">
+            <div class="feeds">
+                <div class="feed">
+                        <div style="display: flex; flex-direction: column; gap: 1rem;text-align: center;">
+                            <h2>Are You Sure?</h2>
+                            <p style="font-size: 20px;">You are about to delete this comment, this cannot be undone.</p>
+                            <form method="POST">
+                                {% csrf_token %}
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </div>
+                            </form>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+<div class="theme">
+    <div class="card">
+        <h2>CUSTOMIZE your site</h2>
+        <p class="text-gry">set you font, color, and background</p>
+
+        <!-- FONT SIZE -->
+        <div class="font-size">
+            <form action="">
+                <h6>aa</h6>
+                    <fieldset class="chose-font-size">
+                        <label for="small" class="visually-hidden">small</label>
+                        <input class="font1" type="radio" name="sizetheme" id="small">
+                        <label for="medium-small" class="visually-hidden">medium small</label>
+                        <input class="font2 active" type="radio" name="sizetheme" id="medium-small">
+                        <label for="normal" class="visually-hidden">normal</label>
+                        <input class="font3" type="radio" name="sizetheme" id="normal">
+                        <label for="medium-tall" class="visually-hidden">medium tall</label>
+                        <input class="font4" type="radio" name="sizetheme" id="medium-tall">
+                        <label for="tall" class="visually-hidden">tall</label>
+                        <input class="font5" type="radio" name="sizetheme" id="tall">
+                    </fieldset>
+                <h3>aa</h3>
+            </form>
+        </div>
+
+
+        <!-- COLOR -->
+        <div class="color">
+            <form action="">
+                <h3>color</h3>
+                <fieldset class="chose-color">
+                    <label for="color1" class="visually-hidden"></label>
+                    <input class="color1" id="color1" name="colortheme" type="radio">
+                    <label for="color2" class="visually-hidden"></label>
+                    <input class="color2" id="color2" name="colortheme" type="radio">
+                    <label for="color3" class="visually-hidden"></label>
+                    <input class="color3" id="color3" name="colortheme" type="radio">
+                    <label for="color4"class="visually-hidden"></label>
+                    <input class="color4" id="color4" name="colortheme" type="radio">
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- BACKGROUND -->
+        <div class="background">
+            <form action="">
+                <h3>background</h3>
+                <fieldset class="chose-background">
+                    <input id="bg1" type="radio" name="bgtheme" class="bg1">
+                    <input id="bg3" type="radio" name="bgtheme" class="bg3">
+                </fieldset>
+            </form>
+        </div> 
+
+    </div>
+</div>
+<script type="text/javascript" src="{% static 'js/script_1.js' %}"></script>
+{% endblock content %}

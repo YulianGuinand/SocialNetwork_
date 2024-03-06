@@ -1,0 +1,41 @@
+{% extends 'landing/base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+{% load static %}
+{% block content %}
+<main>
+    <div class="container main-container">
+        <div class="main-left">
+            <div class="profile" style="display: flex; align-items: center; justify-content: center;">
+				<a href="{% url 'post-list' %}" class="btn btn-primary">back</a>
+			</div>
+            <!--.... SIDEBAR .....-->
+            <div class="side-bar">
+                <a href="{% url 'post-list' %}" class="menu-item">
+                    <span><img src="{% static 'images/svg/house-door.svg'%}" class="icon1" alt=""></span><h3>home</h3>
+                </a>
+                <a href="#" id="themeMenu" class="menu-item">
+                    <span><img src="{% static 'images/svg/palette.svg' %}" class="icon1" alt=""></span><h3>theme</h3>
+                </a>
+            </div>
+		</div>
+
+        <div class="main-mid">
+            <div class="feeds">
+                <div class="feed">
+                    <form class="creatPost createpost_form" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column;">
+                        <div class="text-post">
+                            {% csrf_token %}
+                            {{ form | crispy }}
+                        </div>
+                        <div>
+                            <button value="post" class="btn btn-primary">Post</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock content %}

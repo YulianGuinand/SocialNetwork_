@@ -1,0 +1,27 @@
+{% load custom_tags %}
+{% load static %}
+<nav>
+  <div class="container nav-container">
+    <a {% if user.is_authenticated %}
+      href="{% url 'post-list' %}"
+      {% else %}
+      href="{% url 'index' %}"{% endif %} style="text-decoration: none;">
+      <h2 class="logo">social <span>book</span></h2>
+      </a>
+      
+      {% if user.is_authenticated %}
+      <div class="search-bar">
+        <img src="{% static 'images/svg/search.svg' %}">
+        <form method="GET" action="{% url 'profile-search' %}" class="d-flex" role="search">
+            <input type="search" placeholder="search for creater..." aria-label="Username" aria-describedby="basic-addon1" name="query" value="{{ request.GET.query }}" >
+        </form>
+      </div>
+      <div class="create">
+          <div class="profile-photos">
+            <a href="{% url 'profile' request.user.profile.pk %}"><img src="{{ request.user.profile.picture.url}}" alt=""></a>
+          </div>
+          <a style="text-decoration: none; color: var(--color-dark);" href="{% url 'account_logout' %}">Sign Out</a>
+      </div>
+      {% endif %}
+  </div>
+</nav>

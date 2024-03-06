@@ -1,0 +1,187 @@
+{% extends 'landing/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+{% block content %}
+<main>
+	<div class="container main-container">
+		
+		<div class="main-left">
+			<div class="profile" style="display: flex; align-items: center; justify-content: center;">
+				<a href="{% url 'post-list' %}" class="btn btn-primary">back</a>
+			</div>
+			<!--.... SIDEBAR .....-->
+            <div class="side-bar">
+                <a href="{% url 'post-list' %}" class="menu-item">
+                    <span><img src="{% static 'images/svg/house-door.svg'%}" class="icon1" alt=""></span><h3>home</h3>
+                </a>
+                <a href="#" id="themeMenu" class="menu-item">
+                    <span><img src="{% static 'images/svg/palette.svg' %}" class="icon1" alt=""></span><h3>theme</h3>
+                </a>
+            </div>
+		</div>
+
+		<div class="main-mid thread">
+			<div class="feeds">
+				<div class="feed" style="position: relative;">
+					<div class="profile" >
+						<div style="padding: 1rem; display: flex; gap: 1rem; align-items: center;">
+							{% if thread.receiver == request.user %}
+								<div class="profile-photos">
+									<img src="{{thread.user.profile.picture.url}}">
+								</div>
+								<div class="hendel">
+									{% if thread.user.profile.name %}
+									<h4>{{thread.user.profile.name}}</h4>
+									<p class="text-gry">@{{thread.user.username}}</p>
+									{%else%}
+									<h4>@{{thread.user.username}}</h4>
+									{%endif%}
+								</div>
+							{% else %}
+							<div class="profile-photos">
+								<img src="{{thread.receiver.profile.picture.url}}">
+							</div>
+							<div class="hendel">
+								{% if thread.receiver.profile.name %}
+								<h4>{{thread.receiver.profile.name}}</h4>
+								<p class="text-gry">@{{thread.receiver.username}}</p>
+								{%else%}
+								<h4>@{{thread.receiver.username}}</h4>
+								{%endif%}
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+				<div class="feed" style="padding-top: 3rem">
+					<div class="messages-container-message">
+						{% if message_list.all.count == 0 %}
+						<div class="no-message-container">
+							<p class="text-gry">No Messages</p>
+						</div>
+						{% endif %}
+						<div class="scroll" style="max-height: 100%; overflow-y: scroll;">
+							{% for message in message_list %}
+								<div class="message-container">
+									{% if message.sender_user == request.user %}
+										<div class="sended-message">
+											{% if message.image %}
+											<div class="message-body-image">
+												<img src="{{ message.image.url }}" class="message-image"/>
+												<div class="sent-message">
+													<p>{{ message.body }}</p>
+													<a class="message-remove" href="{% url 'delete-message' thread.pk message.pk  %}"><img src="{% static 'images/svg/gear.svg' %}"class="icon2" /></i></a>
+												</div>
+											</div>
+											{% else %}
+											<div class="message-body">
+												<div class="sent-message">
+													<p>{{ message.body }}</p>
+												</div>
+												<a class="message-remove" href="{% url 'delete-message' thread.pk message.pk  %}"><img src="{% static 'images/svg/gear.svg' %}" class="icon2"/></i></a>
+											</div>
+											{%endif%}
+										</div>
+									{% elif message.receiver_user == request.user %}
+										<div class="received-message">
+											<div class="profile-photos">
+												<img src="{{ message.sender_user.profile.picture.url }}"/>
+											</div>
+
+											{% if message.image %}
+											<div class="message-body-image">
+												<img src="{{ message.image.url }}" class="message-image"/>
+												<div class="sent-message">
+													<p>{{ message.body }}</p>
+													<a class="message-remove" href="{% url 'delete-message' thread.pk message.pk  %}"><img src="{% static 'images/svg/gear.svg' %}"class="icon2" /></i></a>
+												</div>
+											</div>
+											{% else %}
+											<div class="message-body">
+												<div class="sent-message">
+													<p>{{ message.body }}</p>
+												</div>
+												<a class="message-remove" href="{% url 'delete-message' thread.pk message.pk  %}"><img src="{% static 'images/svg/gear.svg' %}" class="icon2"/></i></a>
+											</div>
+											{%endif%}
+										</div>
+									{% endif %}
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+					<div class="creatPost message-form-container" >
+						<div class="text-post">
+							<form class="message-form" method="POST" action="{% url 'create-message' thread.pk %}" enctype="multipart/form-data">
+								<div style="width: 90%; display:flex; align-items:center; gap:1rem; justify-content: space-between;">
+									{% csrf_token %}
+									{{ form | crispy }}
+								</div>
+								<button class="btn" type="submit"><img src="{% static 'images/svg/chat-dots.svg' %}" class="icon1"></button>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</main>
+<div class="theme">
+    <div class="card">
+        <h2>CUSTOMIZE your site</h2>
+        <p class="text-gry">set you font, color, and background</p>
+
+        <!-- FONT SIZE -->
+        <div class="font-size">
+            <form action="">
+                <h6>aa</h6>
+                    <fieldset class="chose-font-size">
+                        <label for="small" class="visually-hidden">small</label>
+                        <input class="font1" type="radio" name="sizetheme" id="small">
+                        <label for="medium-small" class="visually-hidden">medium small</label>
+                        <input class="font2 active" type="radio" name="sizetheme" id="medium-small">
+                        <label for="normal" class="visually-hidden">normal</label>
+                        <input class="font3" type="radio" name="sizetheme" id="normal">
+                        <label for="medium-tall" class="visually-hidden">medium tall</label>
+                        <input class="font4" type="radio" name="sizetheme" id="medium-tall">
+                        <label for="tall" class="visually-hidden">tall</label>
+                        <input class="font5" type="radio" name="sizetheme" id="tall">
+                    </fieldset>
+                <h3>aa</h3>
+            </form>
+        </div>
+
+
+        <!-- COLOR -->
+        <div class="color">
+            <form action="">
+                <h3>color</h3>
+                <fieldset class="chose-color">
+                    <label for="color1" class="visually-hidden"></label>
+                    <input class="color1" id="color1" name="colortheme" type="radio">
+                    <label for="color2" class="visually-hidden"></label>
+                    <input class="color2" id="color2" name="colortheme" type="radio">
+                    <label for="color3" class="visually-hidden"></label>
+                    <input class="color3" id="color3" name="colortheme" type="radio">
+                    <label for="color4"class="visually-hidden"></label>
+                    <input class="color4" id="color4" name="colortheme" type="radio">
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- BACKGROUND -->
+        <div class="background">
+            <form action="">
+                <h3>background</h3>
+                <fieldset class="chose-background">
+                    <input id="bg1" type="radio" name="bgtheme" class="bg1">
+                    <input id="bg3" type="radio" name="bgtheme" class="bg3">
+                </fieldset>
+            </form>
+        </div> 
+
+    </div>
+</div>
+<script type="text/javascript" src="{% static 'js/script_1.js' %}"></script>
+{%endblock%}

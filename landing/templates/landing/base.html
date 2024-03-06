@@ -1,0 +1,23 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://kit.fontawesome.com/528169ce52.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="{% static 'style_style.css' %}">
+
+    {% load crispy_forms_tags %}
+    <title>Réseau Social</title>
+  </head>
+  <body>
+      {% include "landing/navbar.html" %}
+      {% block content %}
+      
+      {% endblock content %}
+      
+    <script type="text/javascript" src="{% static 'js/social.js' %}"></script>
+  </body>
+</html>

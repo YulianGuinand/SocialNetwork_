@@ -1,0 +1,256 @@
+{% extends 'landing/base.html' %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+
+{% block content %}
+<main>
+    <div class="container main-container">
+
+        <div class="main-left">
+			<div class="profile" style="display: flex; align-items: center; justify-content: center;">
+				<a href="{% url 'post-list' %}" class="btn btn-primary">back</a>
+			</div>
+            <!--.... SIDEBAR .....-->
+            <div class="side-bar">
+                <a href="{% url 'post-list' %}" class="menu-item">
+                    <span><img src="{% static 'images/svg/house-door.svg'%}" class="icon1" alt=""></span><h3>home</h3>
+                </a>
+                <a href="#" id="themeMenu" class="menu-item">
+                    <span><img src="{% static 'images/svg/palette.svg' %}" class="icon1" alt=""></span><h3>theme</h3>
+                </a>
+            </div>
+		</div>
+
+        <div class="main-right">
+            <div class="feeds">
+                <div class="feed">
+                    <div class="head">
+                        <div class="user">
+                            <div class="profile-photos">
+                                <a style="text-decoration: none;" href="{% url 'profile' post.author.pk %}"><img src="{{ post.author.profile.picture.url }}" alt=""></a>
+                            </div>
+                            <div class="info">
+                                <a style="text-decoration: none;" class="profile-link" href="{% url 'profile' post.author.pk %}"><h3>{{ post.author }}</h3></a> 
+                                <small>{{post.created_on}}</small>
+                            </div>
+                        </div>
+                        {% if post.author == request.user %}
+                            <span class="edit">
+                                <a href="{% url 'post-edit' post.pk %}"><img class="icon2" src="{% static 'images/svg/gear.svg' %}" alt=""></a>
+                            </span>
+                            <span class="edit">
+                                <a href="{% url 'post-delete' post.pk %}"><img class="icon2" src="{% static 'images/svg/gear.svg' %}" alt=""></a>
+                            </span>
+                            {%endif%}
+                    </div>
+                    <div class="feed-photos">
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}"/>
+                        {% endif %}
+                    </div>
+                    <div class="body">
+                        {{ post.body|safe }}
+                    </div>
+                    <div class="action-buttons">
+                        <div class="inter-action-button">
+                            <form style="display: flex;" method="POST" action="{% url 'like' post.pk %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="{{ request.path }}">
+                                <button style='background: transparent;' class="remove-default-btn" type="submit">
+                                    <span>
+                                        {% if liked %}
+                                        <img src="{% static 'images/svg/heart-fill.svg'%}" alt="" class="icon2">
+                                        {%else%}
+                                        <img src="{% static 'images/svg/heart.svg'%}" alt="" class="icon2">
+                                        {%endif%}
+                                    </span>
+                                </button>
+                            </form>
+                                        
+                            <a href="{% url 'post-detail' post.pk %}"><span><img src="{% static 'images/svg/chat-dots.svg'%}" alt="" class="icon2"></span></a>
+                            <span><img src="{% static 'images/svg/share.svg'%}" alt="" class="icon2"></span>
+                        </div>
+                        <div class="book-mark">
+                            <span><img src="{% static 'images/svg/bookmark.svg' %}" alt="" class="icon2"></span>
+                        </div>
+                    </div>
+                    <div class="liked-by">
+                        {% if post.title%}
+                        <span><img src="{{user.profile.picture.url}}" alt=""></span>
+                        <p>{{post.title}}</p>
+                        {%endif%}
+                    </div>
+                    <div class="caption" style="margin-bottom:1rem;">
+                        <p class="text-gry">{{post.likes.all.count}} likes</p>
+                    </div> 
+
+                    <div class="scroll" style="min-height: 5rem; max-height: 15rem; overflow-y: scroll;">
+                            {% for comment_info in comment_infos %}
+                                {% if comment_info.1.is_parent %}
+                                <div class="head" style="justify-content: space-between; margin-top: 1rem;" >
+                                    <div class="profile-info" style="display: flex; gap: 1rem;">
+                                        <a href="{% url 'profile' comment_info.1.author.pk %}">
+                                            <img src="{{ comment_info.1.author.profile.picture.url }}"  class="profile-photos"/>
+                                        </a>
+                                        <div style="display: flex; flex-direction: column; align-items: flex-start; justify-content: center;" >
+                                            <div style="display:flex; align-items:center; gap: 1rem;">
+                                                <a href="{% url 'profile' comment_info.1.author.pk %}">{{ comment_info.1.author }}</a>
+                                                {% if request.user == comment_info.1.author %}
+                                                <a href="{% url 'comment-delete' post.pk comment_info.1.pk %}">
+                                                    <img src="{% static 'images/svg/gear.svg' %} ">
+                                                </a>
+                                            </div>
+                                            {% endif %}
+                                            <div class="comment-body">
+                                                {{ comment_info.1.comment|safe }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 1rem; height: fit-content; max-width: 100%;">
+                                        <form method="POST" action="{% url 'comment-like' post.pk comment_info.1.pk%}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                            <button style="background: var(--color-white);" type="submit">
+                                            {% if comment_info.0 %}
+                                                <img src="{% static 'images/svg/heart-fill.svg' %}">
+                                                <span>
+                                                    {{ comment_info.1.likes.all.count }}
+                                                </span>
+                                            {%else%}
+                                                <img src="{% static 'images/svg/heart.svg' %}">
+                                                <span>
+                                                    {{ comment_info.1.likes.all.count }}
+                                                </span>
+                                            {%endif%}
+                                            </button>
+                                        </form>
+                                        
+                                        <div>
+                                            <button style="background: var(--color-white);" onclick="commentReplyToggle('{{ comment_info.1.pk }}')" >
+                                                <img src="{% static 'images/svg/chat-left-dots.svg' %}" >
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div style="display: none; margin-top: 1rem; margin-left: 1rem;" id="{{comment_info.1.pk}}">
+                                    <form method="POST" action="{% url 'comment-reply' post.pk comment_info.1.pk %}" style="display: flex; align-items: center; gap: 1rem;">
+                                        <img src="{{user.profile.picture.url}}" class="profile-photos" />
+                                        <div style="margin-right: 2rem; display: flex; justify-content: space-between; width: 100%;">
+                                            {% csrf_token %}
+                                            {{ form | crispy }}
+                                            <button style="background: var(--color-white);">
+                                                <img src="{% static 'images/svg/chat-left-dots.svg'%}">
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                                
+                                {% for child_comment in comment_info.1.children %}
+                                    <div style="display: flex; margin-top: 1rem; margin-bottom: 2rem; margin-left: 3rem;">
+                                            <div style="display:flex; align-items:center; gap: 1rem;">
+                                                    <a href="{% url 'profile' child_comment.author.pk %}">
+                                                        <img class="profile-photos" src="{{ child_comment.author.profile.picture.url }}" />
+                                                    </a>
+                                                    <div style="display: flex; flex-direction: column;">
+                                                        <div style="display: flex; gap: 1rem;" >
+                                                            <a class="profile-link" href="{% url 'profile' child_comment.author.pk %}">{{ child_comment.author }}</a> 
+                                                            {% if request.user == child_comment.author %}
+                                                            <a href="{% url 'comment-delete' post.pk child_comment.pk %}">
+                                                                <img src="{% static 'images/svg/gear.svg' %}">
+                                                            </a>
+                                                            {% endif %}
+                                                        </div>
+                                                        {{ child_comment.comment|safe }}
+                                                    </div>
+                                            </div>
+                                    </div>
+
+                                {%endfor%}
+
+                                {%endif%}
+                            {%endfor%}
+                    </div>
+                    <div style="position: block; margin-top: 6rem;">
+                        <div id="comment_post_form" style="position: absolute; bottom: 0; left: 50%; width: 100%; background: transparent; padding-top: 1.5rem; transform: translate(-50%, 0)">
+                            <form method="POST" style="display: flex; flex-direction: row; justify-content: flex-start; align-items:center; margin: 1rem; background: var(--color-light); border-top-left-radius: 2rem;border-top-right-radius: 2rem;">
+                                <div style="margin: 1rem; display: flex; flex-direction: row; justify-content: space-evenly; align-items:center; width: 100%">
+                                    <div style="display: flex; align-items:center; gap: 1rem;">
+                                        <img class="profile-photos" src="{{user.profile.picture.url}}" />
+                                        {% csrf_token %}
+                                        {{ form | crispy }}
+                                    </div>
+                                    <button class="">
+                                        <img src="{% static 'images/svg/chat-left-dots.svg'%}">
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                
+
+            </div>
+
+        </div>
+    </div>
+</main>
+<div class="theme">
+    <div class="card">
+        <h2>CUSTOMIZE your site</h2>
+        <p class="text-gry">set you font, color, and background</p>
+
+        <!-- FONT SIZE -->
+        <div class="font-size">
+            <form action="">
+                <h6>aa</h6>
+                    <fieldset class="chose-font-size">
+                        <label for="small" class="visually-hidden">small</label>
+                        <input class="font1" type="radio" name="sizetheme" id="small">
+                        <label for="medium-small" class="visually-hidden">medium small</label>
+                        <input class="font2 active" type="radio" name="sizetheme" id="medium-small">
+                        <label for="normal" class="visually-hidden">normal</label>
+                        <input class="font3" type="radio" name="sizetheme" id="normal">
+                        <label for="medium-tall" class="visually-hidden">medium tall</label>
+                        <input class="font4" type="radio" name="sizetheme" id="medium-tall">
+                        <label for="tall" class="visually-hidden">tall</label>
+                        <input class="font5" type="radio" name="sizetheme" id="tall">
+                    </fieldset>
+                <h3>aa</h3>
+            </form>
+        </div>
+
+
+        <!-- COLOR -->
+        <div class="color">
+            <form action="">
+                <h3>color</h3>
+                <fieldset class="chose-color">
+                    <label for="color1" class="visually-hidden"></label>
+                    <input class="color1" id="color1" name="colortheme" type="radio">
+                    <label for="color2" class="visually-hidden"></label>
+                    <input class="color2" id="color2" name="colortheme" type="radio">
+                    <label for="color3" class="visually-hidden"></label>
+                    <input class="color3" id="color3" name="colortheme" type="radio">
+                    <label for="color4"class="visually-hidden"></label>
+                    <input class="color4" id="color4" name="colortheme" type="radio">
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- BACKGROUND -->
+        <div class="background">
+            <form action="">
+                <h3>background</h3>
+                <fieldset class="chose-background">
+                    <input id="bg1" type="radio" name="bgtheme" class="bg1">
+                    <input id="bg3" type="radio" name="bgtheme" class="bg3">
+                </fieldset>
+            </form>
+        </div> 
+
+    </div>
+</div>
+<script type="text/javascript" src="{% static 'js/script_1.js' %}"></script>
+{% endblock content %}

@@ -1,0 +1,131 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+{% block content %}
+
+<main>
+    <div class="container main-container">
+
+        <div class="main-left">
+            <div class="profile">
+				<a href="{% url 'post-list' %}" class="btn btn-primary">back</a>
+                <div class="profile-photos">
+                    <img src="{{ user.profile.picture.url}}" alt="">
+                </div>
+                <div class="hendel">
+                    {% if user.profile.name %}
+                    <h4>{{user.profile.name}}</h4>
+                    <p class="text-gry">@{{user.username}}</p>
+                    {%else%}
+                    <h4>@{{user.profile.name}}</h4>
+                    {%endif%}
+                </div>
+            </div>
+            <!--.... SIDEBAR .....-->
+            <div class="side-bar">
+                <a href="{% url 'post-list' %}" class="menu-item">
+                    <span><img src="{% static 'images/svg/house-door.svg'%}" class="icon1" alt=""></span><h3>home</h3>
+                </a>
+                <a href="#" id="themeMenu" class="menu-item">
+                    <span><img src="{% static 'images/svg/palette.svg' %}" class="icon1" alt=""></span><h3>theme</h3>
+                </a>
+            </div>
+        </div>
+
+
+        <div class="main-left" style="display: flex; flex-direction: column; align-items: center;">
+                    <h2 style="margin-bottom: 2rem;">Tous les followers</h2>
+                    {% for follower_info in followers_info %}
+                        <div class="profile" style="margin-bottom: 1rem; width: 60%; ">
+                            <div class="profile-photos">
+                                <a href="{% url 'profile' follower_info.1.profile.pk %}"><img src="{{ follower_info.1.profile.picture.url }}" /></a>
+                            </div>
+                            <div class="hendel" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+
+                                <a href="{% url 'profile' follower_info.1.profile.pk %}" >{{ follower_info.1.username }}</a>
+                                {% if follower_info.1.profile.location %}
+                                    <p>{{ follower_info.1.profile.location }}</p>
+                                {% endif %}
+                                <div style="display: flex; gap: .3rem;">
+                                    {%if follower_info.1 == user %}
+                                    {%else%}
+                                        {% if follower_info.0 %}
+                                            <form method="post" action="{% url 'remove-follower-list' follower_info.1.profile.pk profile.pk%}">
+                                                {% csrf_token %}
+                                                <button class="btn btn-primary" type="submit" >Unfollow</button>
+                                            </form>
+                                                    
+                                        {%else%}
+                                            <form method="post" action="{% url 'add-follower-list' follower_info.1.profile.pk profile.pk %}">
+                                                {% csrf_token %}
+                                                <button class="btn btn-primary" type="submit" >Follow</button>
+                                            </form>
+                                        {%endif%}
+                                    {%endif%}
+                                </div>
+                            </div>
+                        </div>
+
+                    {%endfor%}
+            </div>
+        </div>
+    </div>
+</main>
+<div class="theme">
+    <div class="card">
+        <h2>CUSTOMIZE your site</h2>
+        <p class="text-gry">set you font, color, and background</p>
+
+        <!-- FONT SIZE -->
+        <div class="font-size">
+            <form action="">
+                <h6>aa</h6>
+                    <fieldset class="chose-font-size">
+                        <label for="small" class="visually-hidden">small</label>
+                        <input class="font1" type="radio" name="sizetheme" id="small">
+                        <label for="medium-small" class="visually-hidden">medium small</label>
+                        <input class="font2 active" type="radio" name="sizetheme" id="medium-small">
+                        <label for="normal" class="visually-hidden">normal</label>
+                        <input class="font3" type="radio" name="sizetheme" id="normal">
+                        <label for="medium-tall" class="visually-hidden">medium tall</label>
+                        <input class="font4" type="radio" name="sizetheme" id="medium-tall">
+                        <label for="tall" class="visually-hidden">tall</label>
+                        <input class="font5" type="radio" name="sizetheme" id="tall">
+                    </fieldset>
+                <h3>aa</h3>
+            </form>
+        </div>
+
+
+        <!-- COLOR -->
+        <div class="color">
+            <form action="">
+                <h3>color</h3>
+                <fieldset class="chose-color">
+                    <label for="color1" class="visually-hidden"></label>
+                    <input class="color1" id="color1" name="colortheme" type="radio">
+                    <label for="color2" class="visually-hidden"></label>
+                    <input class="color2" id="color2" name="colortheme" type="radio">
+                    <label for="color3" class="visually-hidden"></label>
+                    <input class="color3" id="color3" name="colortheme" type="radio">
+                    <label for="color4"class="visually-hidden"></label>
+                    <input class="color4" id="color4" name="colortheme" type="radio">
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- BACKGROUND -->
+        <div class="background">
+            <form action="">
+                <h3>background</h3>
+                <fieldset class="chose-background">
+                    <input id="bg1" type="radio" name="bgtheme" class="bg1">
+                    <input id="bg3" type="radio" name="bgtheme" class="bg3">
+                </fieldset>
+            </form>
+        </div> 
+
+    </div>
+</div>
+<script type="text/javascript" src="{% static 'js/script_1.js' %}"></script>
+
+{%endblock content%}

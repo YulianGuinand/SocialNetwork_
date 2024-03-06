@@ -1,0 +1,311 @@
+{% extends 'landing/base.html' %}
+{% load static %}
+{% load crispy_forms_tags %}
+{% block content %}
+<main>
+    <div class="container main-container">
+        <div class="main-left">
+			<div class="profile" style="display: flex; align-items: center; justify-content: center;">
+				<a href="{% url 'post-list' %}" class="btn btn-primary">back</a>
+			</div>
+            <!--.... SIDEBAR .....-->
+            <div class="side-bar">
+                <a href="{% url 'post-list' %}" class="menu-item">
+                    <span><img src="{% static 'images/svg/house-door.svg'%}" class="icon1" alt=""></span><h3>home</h3>
+                </a>
+                <a href="#" id="themeMenu" class="menu-item">
+                    <span><img src="{% static 'images/svg/palette.svg' %}" class="icon1" alt=""></span><h3>theme</h3>
+                </a>
+            </div>
+		</div>
+
+        <div class="main-mid">
+            <div class="feeds">
+                {% if tag %}
+                <div class="feed">
+                    <h3>Explore #{{ tag.name }} Posts</h3>
+                    <p style="margin-bottom: 1rem">Most recent posts tagged with {{ tag.name }}</p>
+                </div>
+                {%else%}
+                <div class="feed">
+                    <h3>Explore Posts</h3>
+                    <p style="margin-bottom: 1rem">Explore tags to find new posts</p>
+                </div>
+                {% endif %}
+
+                <form method="POST" class="creatPost">
+                    {% csrf_token %}
+                    {{ explore_form | crispy }}
+                </form>
+
+                {% for post in posts %}
+                            {% if post.0 %}
+                            <div class="feed">
+                                {% if post.1.author == user %}
+                                    <div class="head">
+                                        <div class="user">
+                                            <div class="profile-photos">
+                                                <a style="text-decoration: none;" href="{% url 'profile' post.1.author.pk %}"><img src="{{ post.1.author.profile.picture.url }}" alt=""></a>
+                                            </div>
+                                            <div class="info">
+                                                <a style="text-decoration: none;" class="profile-link" href="{% url 'profile' post.1.author.pk %}"><h3>{{ post.1.author }}</h3></a> 
+                                                <small>{{post.1.created_on}}</small>
+                                            </div>
+                                        </div>
+                                        <span class="edit">
+                                            <a href="{% url 'post-detail' post.1.pk %}"><img class="icon2" src="{% static 'images/svg/three-dots.svg' %}" alt=""></a>
+                                        </span>
+                                    </div>
+                                    <div class="feed-photos">
+                                        {% if post.2 %}
+                                            <img src="{{ post.2 }}" class="post-image" />
+                                        {% endif %}
+                                    </div>
+                                    <div class="body">
+                                       <p>{{ post.1.body|safe }}</p>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <div class="inter-action-button">
+                                            <form style="display: flex;" method="POST" action="{% url 'like' post.1.pk %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="next" value="{{ request.path }}">
+                                                <button style='background: transparent;' class="remove-default-btn" type="submit">
+                                                    <span><img src="{% static 'images/svg/heart.svg'%}" alt="" class="icon2"></span>
+                                                </button>
+                                            </form>
+                                                
+                                            <a href="{% url 'post-detail' post.1.pk %}"><span><img src="{% static 'images/svg/chat-dots.svg'%}" alt="" class="icon2"></span></a>
+                                            <span><img src="{% static 'images/svg/share.svg'%}" alt="" class="icon2"></span>
+                                        </div>
+                                    </div>
+                                    <div class="liked-by">
+                                        {% if post.1.title%}
+                                        <span><img src="{{user.profile.picture.url}}" alt=""></span>
+                                        <p>{{post.1.title}}</p>
+                                        {%endif%}
+                                    </div>
+                                    <div class="caption">
+                                        <p>{{post.1.likes.all.count}} likes</p>
+                                        <a href="{% url 'post-detail' post.1.pk %}"><div class="text-gry comment">view all comments</div></a>
+                                    </div>
+                                {%else%}
+                                    <div class="head">
+                                        <div class="user">
+                                            <div class="profile-photos">
+                                                <a style="text-decoration: none;" href="{% url 'profile' post.1.author.pk %}"><img src="{{ post.1.author.profile.picture.url }}" alt=""></a>
+                                            </div>
+                                            <div class="info">
+                                                <a style="text-decoration: none;" class="profile-link" href="{% url 'profile' post.1.author.pk %}"><h3>{{ post.1.author }}</h3></a> 
+                                                <small>{{post.1.created_on}}</small>
+                                            </div>
+                                        </div>
+                                        <span class="edit">
+                                            <a href="{% url 'post-detail' post.1.pk %}"><img class="icon2" src="{% static 'images/svg/three-dots.svg' %}" alt=""></a>
+                                        </span>
+                                        <form method="post" action="{% url 'remove-follower-post' post.1.author.pk %}">
+                                            {% csrf_token %}
+                                            <button class="btn btn-primary" type="submit" >Unfollow</button>
+                                        </form>
+                                    </div>
+                                    <div class="feed-photos">
+                                        {% if post.2 %}
+                                            <img src="{{ post.2 }}" class="post-image" />
+                                        {% endif %}
+                                    </div>
+                                    <div class="body">
+                                        <p>{{ post.1.body|safe }}</p>
+                                    </div>
+                                    <div class="action-buttons">
+                                        <div class="inter-action-button">
+                                            <form style="display: flex;" method="POST" action="{% url 'like' post.1.pk %}">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="next" value="{{ request.path }}">
+                                                <button style='background: transparent;' class="remove-default-btn" type="submit">
+                                                    <span><img src="{% static 'images/svg/heart.svg'%}" alt="" class="icon2"></span>
+                                                </button>
+                                            </form>
+                                                
+                                            <a href="{% url 'post-detail' post.1.pk %}"><span><img src="{% static 'images/svg/chat-dots.svg'%}" alt="" class="icon2"></span></a>
+                                            <span><img src="{% static 'images/svg/share.svg'%}" alt="" class="icon2"></span>
+                                        </div>
+                                    </div>
+                                    <div class="liked-by">
+                                        {% if post.1.title%}
+                                        <span><img src="{{post.1.author.profile.picture.url}}" alt=""></span>
+                                        <p>{{post.1.title}}</p>
+                                        {%endif%}
+                                    </div>
+                                    <div class="caption">
+                                        <p>{{post.1.likes.all.count}} likes</p>
+                                        <a href="{% url 'post-detail' post.1.pk %}"><div class="text-gry comment">view all comments</div></a>
+                                    </div>
+                                {%endif%}                            
+                            </div>
+                        {% else %}
+                        <div class="feed">
+                        {% if post.1.author == user %}
+                            <div class="head">
+                                <div class="user">
+                                    <div class="profile-photos">
+                                        <a style="text-decoration: none;" href="{% url 'profile' post.1.author.pk %}"><img src="{{ post.1.author.profile.picture.url }}" alt=""></a>
+                                    </div>
+                                    <div class="info">
+                                        <a style="text-decoration: none;" class="profile-link" href="{% url 'profile' post.1.author.pk %}"><h3>{{ post.1.author }}</h3></a> 
+                                        <small>{{post.1.created_on}}</small>
+                                    </div>
+                                </div>
+                                <span class="edit">
+                                    <a href="{% url 'post-detail' post.1.pk %}"><img class="icon2" src="{% static 'images/svg/three-dots.svg' %}" alt=""></a>
+                                </span>
+                            </div>
+                            <div class="feed-photos">
+                                {% if post.2 %}
+                                    <img src="{{ post.2 }}" class="post-image" />
+                                {% endif %}
+                            </div>
+                            <div class="body">
+                                <p>{{ post.1.body|safe }}</p>
+                            </div>
+                            <div class="action-buttons">
+                                <div class="inter-action-button">
+                                    <form style="display: flex;" method="POST" action="{% url 'like' post.1.pk %}">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="next" value="{{ request.path }}">
+                                        <button style='background: transparent;' class="" type="submit">
+                                            <span>
+                                                <img src="{% static 'images/svg/heart.svg'%}" alt="" class="icon2">
+                                            </span>
+                                        </button>
+                                    </form>
+                                        
+                                    <a href="{% url 'post-detail' post.1.pk %}"><span><img src="{% static 'images/svg/chat-dots.svg'%}" alt="" class="icon2"></span></a>
+                                    <span><img src="{% static 'images/svg/share.svg'%}" alt="" class="icon2"></span>
+                                </div>
+                            </div>
+                            <div class="liked-by">
+                                {% if post.1.title%}
+                                <span><img src="{{post.1.author.profile.picture.url}}" alt=""></span>
+                                <p>{{post.1.title}}</p>
+                                {%endif%}
+                            </div>
+                            <div class="caption">
+                                <p class="text-gry">{{post.1.likes.all.count}} likes</p>
+                                <a href="{% url 'post-detail' post.1.pk %}"><div class="text-gry comment">view all comments</div></a>
+                            </div>
+                        {%else%}
+                            <div class="head">
+                                    <div class="user">
+                                        <div class="profile-photos">
+                                            <a style="text-decoration: none;" href="{% url 'profile' post.1.author.pk %}"><img src="{{ post.1.author.profile.picture.url }}" alt=""></a>
+                                        </div>
+                                        <div class="info">
+                                            <a style="text-decoration: none;" class="profile-link" href="{% url 'profile' post.1.author.pk %}"><h3>{{ post.1.author }}</h3></a> 
+                                            <small>{{post.1.created_on}}</small>
+                                        </div>
+                                    </div>
+                                    <span class="edit">
+                                        <a href="{% url 'post-detail' post.1.pk %}"><img class="icon2" src="{% static 'images/svg/three-dots.svg' %}" alt=""></a>
+                                    </span>
+                                    <form method="post" action="{% url 'add-follower-post' post.1.author.pk %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-primary" type="submit" >Follow</button>
+                                    </form>
+                            </div>
+                            <div class="feed-photos">
+                                {% if post.2 %}
+                                    <img src="{{ post.2 }}" class="post-image" />
+                                {% endif %}
+                            </div>
+                            <div class="body">
+                                <p>{{ post.1.body|safe }}</p>
+                            </div>
+                            <div class="action-buttons">
+                                    <div class="inter-action-button">
+                                        <form style="display: flex;" method="POST" action="{% url 'like' post.1.pk %}">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="next" value="{{ request.path }}">
+                                            <button style='background: transparent;' class="remove-default-btn" type="submit">
+                                                <span><img src="{% static 'images/svg/heart.svg'%}" alt="" class="icon2"></span>
+                                            </button>
+                                        </form>
+                                            
+                                        <a href="{% url 'post-detail' post.1.pk %}"><span><img src="{% static 'images/svg/chat-dots.svg'%}" alt="" class="icon2"></span></a>
+                                        <span><img src="{% static 'images/svg/share.svg'%}" alt="" class="icon2"></span>
+                                    </div>
+                            </div>
+                            <div class="liked-by">
+                                {% if post.1.title%}
+                                <span><img src="{{post.1.author.profile.picture.url}}" alt=""></span>
+                                <p>{{post.1.title}}</p>
+                                {%endif%}
+                            </div>
+                            <div class="caption">
+                                <p class="text-gry">{{post.1.likes.all.count}} likes</p>
+                                <a href="{% url 'post-detail' post.1.pk %}"><div class="text-gry comment">view all comments</div></a>
+                            </div> 
+                        {%endif%}
+                        </div>
+                        {%endif%}
+                        {%endfor%}
+            </div>
+        </div>
+    </div>
+</main>
+<div class="theme">
+    <div class="card">
+        <h2>CUSTOMIZE your site</h2>
+        <p class="text-gry">set you font, color, and background</p>
+
+        <!-- FONT SIZE -->
+        <div class="font-size">
+            <form action="">
+                <h6>aa</h6>
+                    <fieldset class="chose-font-size">
+                        <label for="small" class="visually-hidden">small</label>
+                        <input class="font1" type="radio" name="sizetheme" id="small">
+                        <label for="medium-small" class="visually-hidden">medium small</label>
+                        <input class="font2 active" type="radio" name="sizetheme" id="medium-small">
+                        <label for="normal" class="visually-hidden">normal</label>
+                        <input class="font3" type="radio" name="sizetheme" id="normal">
+                        <label for="medium-tall" class="visually-hidden">medium tall</label>
+                        <input class="font4" type="radio" name="sizetheme" id="medium-tall">
+                        <label for="tall" class="visually-hidden">tall</label>
+                        <input class="font5" type="radio" name="sizetheme" id="tall">
+                    </fieldset>
+                <h3>aa</h3>
+            </form>
+        </div>
+
+
+        <!-- COLOR -->
+        <div class="color">
+            <form action="">
+                <h3>color</h3>
+                <fieldset class="chose-color">
+                    <label for="color1" class="visually-hidden"></label>
+                    <input class="color1" id="color1" name="colortheme" type="radio">
+                    <label for="color2" class="visually-hidden"></label>
+                    <input class="color2" id="color2" name="colortheme" type="radio">
+                    <label for="color3" class="visually-hidden"></label>
+                    <input class="color3" id="color3" name="colortheme" type="radio">
+                    <label for="color4"class="visually-hidden"></label>
+                    <input class="color4" id="color4" name="colortheme" type="radio">
+                </fieldset>
+            </form>
+        </div>
+
+        <!-- BACKGROUND -->
+        <div class="background">
+            <form action="">
+                <h3>background</h3>
+                <fieldset class="chose-background">
+                    <input id="bg1" type="radio" name="bgtheme" class="bg1">
+                    <input id="bg3" type="radio" name="bgtheme" class="bg3">
+                </fieldset>
+            </form>
+        </div> 
+
+    </div>
+</div>
+<script type="text/javascript" src="{% static 'js/script_2.js' %}"></script>
+{% endblock content %}

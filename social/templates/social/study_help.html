@@ -1,0 +1,93 @@
+{% extends 'landing/base.html' %}
+{% load crispy_forms_tags %}
+{% load custom_tags %}
+{% load static %}
+{% block content %}
+<main>
+    <div class="container main-container">
+        <div class="main-left">
+            <div class="profile" style="display: flex; align-items: center; justify-content: center;">
+                <a href="{% url 'create-post-help' %}" >Create Proposition</a>
+				<a href="{% url 'post-list' %}" class="btn btn-primary">back</a>
+			</div>
+            <!--.... SIDEBAR .....-->
+            <div class="side-bar">
+                <a href="{% url 'post-list' %}" class="menu-item">
+                    <span><img src="{% static 'images/svg/house-door.svg'%}" class="icon1" alt=""></span><h3>home</h3>
+                </a>
+                <a href="#" id="themeMenu" class="menu-item">
+                    <span><img src="{% static 'images/svg/palette.svg' %}" class="icon1" alt=""></span><h3>theme</h3>
+                </a>
+            </div>
+		</div>
+
+        <div class="main-mid">
+            <div class="feeds">
+                {% for post in posts %}
+                <div class="feed">
+                    <div class="post-header">
+                        <div class="topic-container">
+                            <p>{{post.title}}</p>
+                        </div>
+                        <a href="#">
+                            <img src="{{post.author.profile.picture.url}}" class="profile-photos"/>
+                        </a>
+                        {% if post.author == request.user %}
+                        <a href="{% url 'post-help-delete' post.pk%}">
+                            Delete
+                        </a>
+                        {% endif %}
+                    </div>
+                    <div class="body">
+                        <p>{{ post.body|safe }}</p>
+                    </div>
+                    <div class="post-button">
+                        <a href="{% url 'posthelp-rdv' post.pk%}" class="btn btn-primary">Proposer un crénaux</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="main-right">
+            <div class="friend-requests">
+                <h4>request</h4>
+                <div class="requests-container">
+                    {%for rdvrequest_info in rdvrequest_infos %}
+                    <div class="request">
+                        <div class="info">
+                            <div class="profile-photos">
+                                <img src="{{ rdvrequest_info.0.from_user.profile.picture.url }}" alt="">
+                            </div>
+                            <div class="request-body">
+                                <h5>{{rdvrequest_info.0.from_user.username}}</h5>
+                                <h5>{{rdvrequest_info.0.topic}}</h5>
+                                <p>{{rdvrequest_info.0.date}}</p>
+                            </div>
+                        </div>
+                        {% if rdvrequest_info.1 == 0 %}
+                        <div class="action" style="display: flex; align-items: center; justify-content: space-between;">
+                            <form action="{% url 'accept-request' rdvrequest_info.0.pk %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn btn-primary" id="add" type="submit">Accepter</button>
+                            </form>
+                            <form action="{% url 'reject-request' rdvrequest_info.0.pk %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn" id="del "type="submit">Rejeter</button>
+                            </form>
+                        </div>
+                        {% else %}
+                        <div class="action" style="display: flex; align-items: center; justify-content: space-between;">
+                            <p>votre rendez vous est programmé !</p>
+                            <h5> {{ rdvrequest_info.0.topic }} </h5>
+                            <p> {{ rdvrequest_info.0.date }} </p>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {%endfor%}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content %}

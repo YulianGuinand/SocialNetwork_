@@ -1,0 +1,183 @@
+* {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+}
+
+.remove-default-btn {
+    border: none; 
+    background-color: transparent; 
+    box-shadow: none;
+}
+
+.edit-color {
+    color: #333; 
+    margin-left: .5rem;
+}
+.link-color {
+    color: #333;
+}
+
+.profile-link {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+}
+
+.location-text{
+    font-size: 15px;
+    font-weight: bold;
+}
+.location-text span{
+    font-weight: lighter;
+}
+.profile-name{
+    font-size: 16px;
+}
+
+
+.profile-buttons{
+    width: 50%;
+}
+
+.post_body_div{
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+    margin-top: 1rem;
+}
+
+.post_body_div::before {
+    position: absolute;
+    content: '...';
+    bottom: 20%;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    background: rgb(255,255,255);
+    background: linear-gradient(0deg, rgba(255,255,255,1) 37%, rgba(255,255,255,0) 100%);
+    padding-top: 1rem;
+    font-size: 40px;
+}
+
+.scroll::-webkit-scrollbar { width: 0 !important }
+.comment_container::-webkit-scrollbar {
+    display: none;
+}
+
+
+.notification-badge {
+    transition: .3s;
+}
+.notification-badge:hover{
+    cursor: pointer;
+    opacity: 0.75;
+    transition: .3s;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown {
+	position: relative;
+	display: inline-block;
+}
+
+.dropdown-content {
+	position: absolute;
+	background-color: #f1f1f1;
+	min-width: 350px;
+	box-shadow: 0px 8px 8px 0px rgba(0,0,0,0.2);
+	z-index: 1;
+	font-size: 0.9rem;
+}
+
+.dropdown-content a {
+	color: #000;
+	padding: 12px 16px;
+	text-decoration: none;
+	display: block;
+}
+
+.dropdown-content a:hover {
+	background-color: #ddd;
+}
+
+.dropdown-item-parent {
+	position: relative;
+	display: block;
+}
+
+.dropdown-item-close {
+	position: absolute;
+	top: 0;
+	right: 0;
+	font-size: 1.8rem;
+	padding-right: 5px;
+	transition: 0.3s
+}
+
+.dropdown-item-close:hover {
+	color: rgb(180, 25, 25);
+	transition: 0.3s;
+	cursor: pointer;
+}
+
+.inbox-icon-container {
+    margin-right: 15px;
+}
+.inbox-icon {
+    color: #333;
+    transition: .5s;
+}
+.inbox-icon:hover{
+    transition: .5s;
+}
+
+.empty-text {
+	color: #777;
+	font-size: 1.5rem;
+	text-align: center;
+}
+
+.sent-message {
+	background-color: #f3f3f3;
+	border-radius: 30px;
+	padding: 10px 25px;
+	width: 90%;
+}
+
+.received-message {
+	background-color: rgb(1, 196, 255);
+	color: #fff;
+	border-radius: 30px;
+	padding: 10px 25px;
+	width: 90%;
+}
+
+.message-receiver-container {
+	margin-left: auto;
+	margin-right: 0;
+}
+
+.message-image {
+	border-radius: 10px;
+	max-width: 90%;
+	height: auto;
+}
+
+.inbox-icon {
+	margin-right: 5px;
+}
+.message_container{
+    width: 25%;
+}
+.message_container:hover .message-remove{
+    display: block;
+}
+.message-remove {
+    display: none;
+}
